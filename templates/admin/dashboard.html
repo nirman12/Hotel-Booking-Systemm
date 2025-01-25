@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+    
+    <!-- Add these buttons at the top of your dashboard -->
+    <div class="mb-4">
+        <a href="{{ url_for('revenue_management') }}" class="btn btn-primary me-2">
+            <i class="fas fa-chart-line"></i> Revenue Management
+        </a>
+        <a href="{{ url_for('user_management') }}" class="btn btn-info">
+            <i class="fas fa-users"></i> User Management
+        </a>
+    </div>
+    
+    <!-- Hotel Management Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h3 class="card-title mb-0">Hotel Management</h3>
+            <button type="button" class="btn btn-success" onclick="showAddHotelModal()">
+                Add New Hotel
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>City</th>
+                            <th>Capacity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hotel in hotels %}
+                        <tr>
+                            <td>{{ hotel.name }}</td>
+                            <td>{{ hotel.city }}</td>
+                            <td>{{ hotel.capacity }}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="showEditHotelModal('{{ hotel.hotel_id }}')">
+                                    Edit
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteHotel('{{ hotel.hotel_id }}')">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title mb-0">Hotel Revenue</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Hotel Name</th>
+                            <th>Total Revenue</th>
+                            <th>Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for revenue in hotel_revenues %}
+                        <tr>
+                            <td>{{ revenue.name }}</td>
+                            <td>${{ "%.2f"|format(revenue.total_revenue or 0) }}</td>
+                            <td>{{ revenue.booking_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookings Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h3 class="card-title mb-0">Recent Bookings</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>User</th>
+                            <th>Hotel</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking, user, hotel in bookings %}
+                        <tr>
+                            <td>{{ booking.booking_id }}</td>
+                            <td>{{ user.first_name }} {{ user.last_name }}</td>
+                            <td>{{ hotel.name }}</td>
+                            <td>{{ booking.check_in_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ booking.check_out_date.strftime('%Y-%m-%d') }}</td>
+                            <td>${{ "%.2f"|format(booking.total_price) }}</td>
+                            <td>
+                                <span class="badge {% if booking.status == 'confirmed' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ booking.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Section -->
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h3 class="card-title mb-0">User Management</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.first_name }} {{ user.last_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" 
+                                        onclick="showResetPasswordModal('{{ user.user_id }}', '{{ user.email }}')">
+                                    Reset Password
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reset Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Reset password for: <span id="userEmail"></span></p>
+                <input type="password" id="newPassword" class="form-control" placeholder="New Password">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="resetPassword()">Reset Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Hotel Modal -->
+<div class="modal fade" id="hotelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hotelModalTitle">Add New Hotel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="hotelForm" enctype="multipart/form-data">
+                    <input type="hidden" id="hotelId">
+                    <div class="mb-3">
+                        <label for="hotelName" class="form-label">Hotel Name</label>
+                        <input type="text" class="form-control" id="hotelName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hotelCity" class="form-label">City</label>
+                        <input type="text" class="form-control" id="hotelCity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hotelCapacity" class="form-label">Capacity</label>
+                        <input type="number" class="form-control" id="hotelCapacity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hotelAbout" class="form-label">About</label>
+                        <textarea class="form-control" id="hotelAbout" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hotelImage" class="form-label">Hotel Image</label>
+                        <input type="file" class="form-control" id="hotelImage" accept="image/*">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveHotel()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentUserId = null;
+let currentHotelId = null;
+
+function showResetPasswordModal(userId, email) {
+    currentUserId = userId;
+    document.getElementById('userEmail').textContent = email;
+    document.getElementById('newPassword').value = '';
+    new bootstrap.Modal(document.getElementById('resetPasswordModal')).show();
+}
+
+function resetPassword() {
+    const newPassword = document.getElementById('newPassword').value;
+    if (!newPassword) {
+        alert('Please enter a new password');
+        return;
+    }
+
+    fetch(`/admin/reset_user_password/${currentUserId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `new_password=${encodeURIComponent(newPassword)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert('Password updated successfully');
+            bootstrap.Modal.getInstance(document.getElementById('resetPasswordModal')).hide();
+        }
+    })
+    .catch(error => {
+        alert('Error updating password');
+        console.error('Error:', error);
+    });
+}
+
+function showAddHotelModal() {
+    currentHotelId = null;
+    document.getElementById('hotelModalTitle').textContent = 'Add New Hotel';
+    document.getElementById('hotelForm').reset();
+    new bootstrap.Modal(document.getElementById('hotelModal')).show();
+}
+
+function showEditHotelModal(hotelId) {
+    currentHotelId = hotelId;
+    document.getElementById('hotelModalTitle').textContent = 'Edit Hotel';
+    
+    // Fetch hotel details and populate form
+    fetch(`/admin/hotel/${hotelId}`)
+        .then(response => response.json())
+        .then(hotel => {
+            document.getElementById('hotelName').value = hotel.name;
+            document.getElementById('hotelCity').value = hotel.city;
+            document.getElementById('hotelCapacity').value = hotel.capacity;
+            document.getElementById('hotelAbout').value = hotel.about_paragraph;
+        });
+    
+    new bootstrap.Modal(document.getElementById('hotelModal')).show();
+}
+
+function saveHotel() {
+    const formData = new FormData();
+    formData.append('name', document.getElementById('hotelName').value);
+    formData.append('city', document.getElementById('hotelCity').value);
+    formData.append('capacity', document.getElementById('hotelCapacity').value);
+    formData.append('about', document.getElementById('hotelAbout').value);
+    
+    const imageFile = document.getElementById('hotelImage').files[0];
+    if (imageFile) {
+        formData.append('image', imageFile);
+    }
+
+    const url = currentHotelId ? 
+        `/admin/hotel/edit/${currentHotelId}` : 
+        '/admin/hotel/add';
+
+    fetch(url, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            location.reload();
+        }
+    })
+    .catch(error => {
+        alert('Error saving hotel');
+        console.error('Error:', error);
+    });
+}
+
+function deleteHotel(hotelId) {
+    if (confirm('Are you sure you want to delete this hotel?')) {
+        fetch(`/admin/hotel/delete/${hotelId}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                location.reload();
+            }
+        })
+        .catch(error => {
+            alert('Error deleting hotel');
+            console.error('Error:', error);
+        });
+    }
+}
+</script>
+
+<style>
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+.table th {
+    border-top: none;
+}
+
+.badge {
+    padding: 0.5em 1em;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.modal-content {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.table-responsive {
+    max-height: 400px;
+    overflow-y: auto;
+}
+</style>
+{% endblock %}

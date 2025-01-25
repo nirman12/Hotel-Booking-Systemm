@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Rooms - {{ hotel.name }}</h2>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
+    
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Room Type</th>
+                    <th>Base Rate</th>
+                    <th>Peak Rate</th>
+                    <th>Off-Peak Rate</th>
+                    <th>Max Guests</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for room in rooms %}
+                <tr>
+                    <td>{{ room.type_name }}</td>
+                    <td>£{{ "%.2f"|format(room.base_rate) }}</td>
+                    <td>£{{ "%.2f"|format(room.peak_rate) }}</td>
+                    <td>£{{ "%.2f"|format(room.off_peak_rate) }}</td>
+                    <td>{{ room.max_guests }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="editRoom({{ room.room_id }})">Edit</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Edit Room Modal -->
+    <div class="modal fade" id="editRoomModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Room Prices</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editRoomForm" method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="base_rate" class="form-label">Base Rate</label>
+                            <input type="number" step="0.01" class="form-control" id="base_rate" name="base_rate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="peak_rate" class="form-label">Peak Rate</label>
+                            <input type="number" step="0.01" class="form-control" id="peak_rate" name="peak_rate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="off_peak_rate" class="form-label">Off-Peak Rate</label>
+                            <input type="number" step="0.01" class="form-control" id="off_peak_rate" name="off_peak_rate" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function editRoom(roomId) {
+    fetch(`/api/room/${roomId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('base_rate').value = data.base_rate;
+            document.getElementById('peak_rate').value = data.peak_rate;
+            document.getElementById('off_peak_rate').value = data.off_peak_rate;
+            document.getElementById('editRoomForm').action = `/admin/room/edit/${roomId}`;
+            new bootstrap.Modal(document.getElementById('editRoomModal')).show();
+        });
+}
+</script>
+{% endblock %} 

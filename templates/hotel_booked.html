@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <i class="fas fa-check-circle fa-3x mb-3"></i>
+                    <h2 class="mb-0">Booking Confirmed!</h2>
+                </div>
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h4 class="text-muted">Thank you for choosing {{ hotel.name }}</h4>
+                        <p class="text-muted">Your booking has been successfully confirmed</p>
+                    </div>
+
+                    <div class="booking-details">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="detail-box p-3 bg-light rounded">
+                                    <h5 class="text-primary"><i class="fas fa-bookmark me-2"></i>Booking ID</h5>
+                                    <p class="mb-0 fs-5">{{ booking_id }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-box p-3 bg-light rounded">
+                                    <h5 class="text-primary"><i class="fas fa-hotel me-2"></i>Hotel</h5>
+                                    <p class="mb-0 fs-5">{{ hotel.name }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="detail-box p-3 bg-light rounded">
+                                    <h5 class="text-primary"><i class="fas fa-bed me-2"></i>Room Type</h5>
+                                    <p class="mb-0 fs-5">{{ room.type_name }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-box p-3 bg-light rounded">
+                                    <h5 class="text-primary"><i class="fas fa-users me-2"></i>Guests</h5>
+                                    <p class="mb-0 fs-5">{{ number_of_guests }} Person(s)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="detail-box p-3 bg-light rounded">
+                                    <h5 class="text-primary"><i class="fas fa-calendar-check me-2"></i>Check-in</h5>
+                                    <p class="mb-0 fs-5">{{ booking.check_in_date.strftime('%d %b %Y') }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-box p-3 bg-light rounded">
+                                    <h5 class="text-primary"><i class="fas fa-calendar-times me-2"></i>Check-out</h5>
+                                    <p class="mb-0 fs-5">{{ booking.check_out_date.strftime('%d %b %Y') }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-box p-3 bg-light rounded">
+                                    <h5 class="text-primary"><i class="fas fa-pound-sign me-2"></i>Total Amount</h5>
+                                    <div class="booking-price">
+                                        <strong>Total Price:</strong> 
+                                        <span class="currency">{{ currency_symbol }}</span>{{ "%.2f"|format(converted_price) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <div class="row justify-content-center">
+                            <div class="col-md-4">
+                                <a href="{{ url_for('download_receipt', booking_id=booking_id) }}" class="btn btn-primary btn-lg w-100 mb-3">
+                                    <i class="fas fa-download me-2"></i>Download Receipt
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="{{ url_for('profile') }}" class="btn btn-outline-primary btn-lg w-100 mb-3">
+                                    <i class="fas fa-user me-2"></i>View Bookings
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <form action="{{ url_for('cancel_booking', booking_id=booking_id) }}" method="POST" class="d-inline">
+                                    <button type="button" class="btn btn-outline-danger btn-lg w-100" 
+                                            onclick="confirmCancellation(this.form)">
+                                        <i class="fas fa-times-circle me-2"></i>Cancel Booking
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: linear-gradient(45deg, #28a745, #20c997);
+    }
+
+    .detail-box {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .detail-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .text-primary {
+        color: #007bff !important;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        border: none;
+    }
+
+    .btn-outline-primary {
+        border: 2px solid #007bff;
+        color: #007bff;
+    }
+
+    .btn-outline-primary:hover {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        color: white;
+    }
+
+    .fas {
+        width: 20px;
+        text-align: center;
+    }
+
+    .btn-outline-danger {
+        border: 2px solid #dc3545;
+        color: #dc3545;
+    }
+
+    .btn-outline-danger:hover {
+        background: linear-gradient(45deg, #dc3545, #c82333);
+        color: white;
+        border-color: transparent;
+    }
+
+    /* Modal styles */
+    .modal-confirm {
+        color: #636363;
+    }
+    .modal-confirm .modal-content {
+        padding: 20px;
+        border-radius: 15px;
+        border: none;
+    }
+    .modal-confirm .modal-header {
+        border-bottom: none;   
+        position: relative;
+    }
+    .modal-confirm .modal-footer {
+        border: none;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 13px;
+    }
+</style>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmCancellationModal" tabindex="-1">
+    <div class="modal-dialog modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header flex-column">
+                <h5 class="modal-title w-100 text-center">Cancel Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Are you sure you want to cancel this booking?</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep it</button>
+                <button type="button" class="btn btn-danger" onclick="proceedWithCancellation()">Yes, Cancel it</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let formToSubmit = null;
+
+function confirmCancellation(form) {
+    formToSubmit = form;
+    new bootstrap.Modal(document.getElementById('confirmCancellationModal')).show();
+}
+
+function proceedWithCancellation() {
+    if (formToSubmit) {
+        formToSubmit.submit();
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,352 @@
+{%extends 'base.html'%} {%block title%}Hotel Details{%endblock%} {%block
+content%}
+
+<style>
+  .topcontent {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  .topcontent img {
+    width: 90%;
+    height: 50vh;
+    object-fit: cover;
+  }
+  .images {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  .topics {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  @media screen and (max-width: 830px) {
+    .images {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .rooms img {
+      width: 50%;
+    }
+  }
+  .rooms {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .rooms h3 {
+    margin-top: 10px;
+  }
+  img {
+    border-radius: 8px;
+  }
+
+  .features {
+    background: linear-gradient(
+      to right,
+      gray 20%,
+      rgba(240, 230, 140, 0.384) 80%
+    );
+    width: 80%;
+    display: flex;
+    padding: 30px;
+    margin: auto;
+    border-radius: 12px;
+    margin-top: 30px;
+  }
+  .textFeature {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 10px;
+    width: 60%;
+  }
+
+  .featureimg {
+    display: flex;
+    margin-left: 10%;
+    gap: 20px;
+    text-align: center;
+    color: black;
+  }
+  .feature1,
+  .feature2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  @media screen and (max-width: 580px) {
+    .features {
+      background: linear-gradient(
+        to bottom,
+        gray 40%,
+        rgba(240, 230, 140, 0.36) 60%
+      );
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      align-items: center;
+    }
+    .textFeature {
+      width: 90%;
+    }
+  }
+  .reserve {
+    display: flex;
+    justify-content: space-around;
+    background-color: rgba(215, 215, 162, 0.314);
+    padding: 30px;
+    width: 80%;
+    margin: auto;
+    margin-top: 50px;
+    border-radius: 12px;
+    align-items: center;
+    text-align: center;
+  }
+  .reserve button {
+    background-color: rgba(165, 226, 165, 0.537);
+    padding: 7px 15px 7px 15px;
+    border-radius: 20px;
+    border: 2px solid white;
+  }
+  .reserve button:hover {
+    background-color: rgba(240, 192, 140, 0.716);
+    transition: 1.2s;
+  }
+  a {
+    text-decoration: none;
+    color: black;
+  }
+  @media screen and (max-width: 850px) {
+    .reserve {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+  #aboutUs {
+    display: flex;
+    width: 90%;
+    margin: auto;
+    gap: 100px;
+    margin-top: 80px;
+    align-items: center;
+  }
+  .aboutcontent {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    width: 50%;
+    gap: 10px;
+  }
+  .aboutimg {
+    display: flex;
+    width: 50%;
+    gap: 20px;
+    justify-content: center;
+  }
+  @media screen and (max-width: 1250px) {
+    #aboutUs {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .aboutcontent {
+      width: 70%;
+    }
+    .aboutimg {
+      margin: auto;
+      width: 80%;
+    }
+    .aboutimg img {
+      width: 220px;
+      position: relative;
+      bottom: 80px;
+    }
+  }
+  @media screen and (max-width: 600px) {
+    .aboutimg {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+    .aboutimg img {
+      width: 200px;
+      margin: 0;
+      position: relative;
+      bottom: 80px;
+    }
+  }
+</style>
+
+<body>
+  <div class="topcontent">
+    <h1 class="details">{{hotel.name}}</h1>
+    <img
+      src="{{url_for('static',filename='/img/backgroundrooms.jpg')}}"
+      alt="background image"
+    />
+  </div>
+  <div class="ourrooms">
+    <div class="topics">
+      <h1 class="hotel_details">
+        <span style="color: purple">Our</span> Rooms
+      </h1>
+    </div>
+    <div class="imagesHotel">
+      <div class="images">
+        <div class="rooms">
+          <img
+            src="{{ url_for('static', filename='/img/room3.jpg') }}"
+            class="img-fluid"
+            alt="..."
+            height="100px"
+            width="80%"
+          />
+          <h3 class="room1"><span style="color: peru">Standard</span> Room</h3>
+          <h5 class="price">
+            <span style="color: gold; font-weight: 100">
+              {{ rooms[0].currency_symbol }}{{ "%.2f"|format(rooms[0].price_per_night) }}
+            </span>
+          </h5>
+        </div>
+
+        <div class="rooms">
+          <img
+            src="{{ url_for('static', filename='/img/room1.jpg') }}"
+            class="img-fluid"
+            alt="..."
+            height="100px"
+            width="80%"
+          />
+          <h3 class="room1">Double <span style="color: peru">Room</span></h3>
+          <h5 class="price">
+            <span style="color: gold; font-weight: 100">
+              {{ rooms[1].currency_symbol }}{{ "%.2f"|format(rooms[1].price_per_night) }}
+            </span>
+          </h5>
+        </div>
+
+        <div class="rooms">
+          <img
+            src="{{ url_for('static', filename='/img/room2.jpg') }}"
+            class="img-fluid"
+            alt="..."
+            height="100px"
+            width="80%"
+          />
+          <h3 class="room1"><span style="color: peru">Family</span> Room</h3>
+          <h5 class="price">
+            <span style="color: gold; font-weight: 100">
+              {{ rooms[2].currency_symbol }}{{ "%.2f"|format(rooms[2].price_per_night) }}
+            </span>
+          </h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="features">
+    <div class="textFeature">
+      <h1 class="featurehead" style="color: white">
+        Enjoy Fetures at<span style="color: black"> InnoStay</span>
+      </h1>
+      <p class="featuresPara" style="color: black">
+        Experience unparalleled luxury, exceptional service, and world-class
+        amenities for a truly memorable stay.
+      </p>
+    </div>
+    <div class="featureimg">
+      <div class="feature1">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="35"
+          height="35"
+          fill="green"
+          class="bi bi-wifi"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.44 12.44 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.52.52 0 0 0 .668.05A11.45 11.45 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049"
+          />
+          <path
+            d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.46 9.46 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065m-2.183 2.183c.226-.226.185-.605-.1-.75A6.5 6.5 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.5 5.5 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091zM9.06 12.44c.196-.196.198-.52-.04-.66A2 2 0 0 0 8 11.5a2 2 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z"
+          />
+        </svg>
+        <p>Free Wi-Fi</p>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="35"
+          height="35"
+          fill="red"
+          class="bi bi-car-front-fill"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M2.52 3.515A2.5 2.5 0 0 1 4.82 2h6.362c1 0 1.904.596 2.298 1.515l.792 1.848c.075.175.21.319.38.404.5.25.855.715.965 1.262l.335 1.679q.05.242.049.49v.413c0 .814-.39 1.543-1 1.997V13.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1.338c-1.292.048-2.745.088-4 .088s-2.708-.04-4-.088V13.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1.892c-.61-.454-1-1.183-1-1.997v-.413a2.5 2.5 0 0 1 .049-.49l.335-1.68c.11-.546.465-1.012.964-1.261a.8.8 0 0 0 .381-.404l.792-1.848ZM3 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2m10 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2M6 8a1 1 0 0 0 0 2h4a1 1 0 1 0 0-2zM2.906 5.189a.51.51 0 0 0 .497.731c.91-.073 3.35-.17 4.597-.17s3.688.097 4.597.17a.51.51 0 0 0 .497-.731l-.956-1.913A.5.5 0 0 0 11.691 3H4.309a.5.5 0 0 0-.447.276L2.906 5.19Z"
+          />
+        </svg>
+        <p>Free Travel</p>
+      </div>
+      <div class="feature2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="35"
+          height="35"
+          fill="blue"
+          class="bi bi-water"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M.036 3.314a.5.5 0 0 1 .65-.278l1.757.703a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.757-.703a.5.5 0 1 1 .372.928l-1.758.703a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0L.314 3.964a.5.5 0 0 1-.278-.65m0 3a.5.5 0 0 1 .65-.278l1.757.703a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.757-.703a.5.5 0 1 1 .372.928l-1.758.703a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0L.314 6.964a.5.5 0 0 1-.278-.65m0 3a.5.5 0 0 1 .65-.278l1.757.703a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.757-.703a.5.5 0 1 1 .372.928l-1.758.703a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0l-1.757-.703a.5.5 0 0 1-.278-.65"
+          />
+        </svg>
+        <p>Swimming Pool</p>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="35"
+          height="35"
+          fill="gold"
+          class="bi bi-egg-fried"
+          viewBox="0 0 16 16"
+        >
+          <path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+          <path
+            d="M13.997 5.17a5 5 0 0 0-8.101-4.09A5 5 0 0 0 1.28 9.342a5 5 0 0 0 8.336 5.109 3.5 3.5 0 0 0 5.201-4.065 3.001 3.001 0 0 0-.822-5.216zm-1-.034a1 1 0 0 0 .668.977 2.001 2.001 0 0 1 .547 3.478 1 1 0 0 0-.341 1.113 2.5 2.5 0 0 1-3.715 2.905 1 1 0 0 0-1.262.152 4 4 0 0 1-6.67-4.087 1 1 0 0 0-.2-1 4 4 0 0 1 3.693-6.61 1 1 0 0 0 .8-.2 4 4 0 0 1 6.48 3.273z"
+          />
+        </svg>
+        <p>Restaurant</p>
+      </div>
+    </div>
+  </div>
+  <div class="reserve">
+    <h2>
+      A best place to stay. <span style="color: peru"> Reserve Now!</span>
+    </h2>
+    <button class="button">
+      <a
+      href="{{ url_for('billing', hotel_id=hotel.hotel_id) }}"
+      style="color: white; text-decoration: none"
+        >Reserve Now</a
+      >
+    </button>
+  </div>
+  <div id="aboutUs">
+    <div class="aboutcontent">
+      <h6 class="about" style="color: peru">ABOUT US</h6>
+      <h1>{{hotel.name}}</h1>
+      <p>{{hotel.about_paragraph}}.</p>
+    </div>
+    <div class="aboutimg">
+      <img src="{{url_for('static',filename='/img/about-1.jpg')}}" alt="" />
+      <img src="{{url_for('static',filename='/img/about-2.jpg')}}" alt="" />
+    </div>
+  </div>
+</body>
+
+{%endblock%}

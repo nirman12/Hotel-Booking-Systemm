@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Revenue Management{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Revenue Management</h2>
+        </div>
+    </div>
+
+    <!-- Revenue Overview Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <h2 class="card-text">${{ "%.2f"|format(total_revenue) }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Bookings</h5>
+                    <h2 class="card-text">{{ total_bookings }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Average Booking Value</h5>
+                    <h2 class="card-text">${{ "%.2f"|format(avg_booking_value) }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue by Hotel -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            <h3 class="card-title mb-0">Revenue by Hotel</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Hotel Name</th>
+                            <th>City</th>
+                            <th>Total Revenue</th>
+                            <th>Total Bookings</th>
+                            <th>Average Booking Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for revenue in hotel_revenues %}
+                        <tr>
+                            <td>{{ revenue.name }}</td>
+                            <td>{{ revenue.city }}</td>
+                            <td>${{ "%.2f"|format(revenue.total_revenue or 0) }}</td>
+                            <td>{{ revenue.booking_count }}</td>
+                            <td>${{ "%.2f"|format(revenue.avg_booking_value or 0) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<style>
+        .profile-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            background-color: #6c7c3b; /* Olive background */
+            color: #fff;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .profile-body {
+            padding: 2rem;
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #6c7c3b;
+            margin-bottom: 2rem;
+        }
+
+        .profile-info {
+            text-align: left;
+        }
+
+        .profile-info h5 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-section {
+            margin-top: 4rem;
+        }
+
+        .booking-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .booking-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .booking-card h3 {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <h3>Welcome, {{ current_user.first_name }} {{ current_user.last_name }}</h3>
+                    </div>
+                    <div class="profile-body">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <img src="{{ url_for('static', filename='/img/profile.png') }}" alt="Profile Picture" class="profile-img rounded-circle">
+                            </div>
+                            <div class="col-md-8 profile-info">
+                                <h5>Email:</h5>
+                                <p>{{ current_user.email }}</p>
+                                <h5>Phone Number:</h5>
+                                <p>{{ current_user.mobile_number }}</p>
+                                <h5>Role:</h5>
+                                <p>{{ current_user.role }}</p>
+                                <h5>Account Created:</h5>
+                                <p>{{ current_user.created_at }}</p>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="booking-section mt-5">
+            <div class="booking-header">
+                <h1>My Bookings</h1>
+                <p>Here are your current bookings:</p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Hotel</th>
+                            <th>Room Type</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.booking_id }}</td>
+                            <td>{{ booking.hotel.name }}</td>
+                            <td>{{ booking.room.type_name }}</td>
+                            <td>{{ booking.check_in_date.strftime('%d %b %Y') }}</td>
+                            <td>{{ booking.check_out_date.strftime('%d %b %Y') }}</td>
+                            <td>£{{ "%.2f"|format(booking.total_price) }}</td>
+                            <td>
+                                {% if booking.status == 'confirmed' %}
+                                    <span class="badge bg-success">Confirmed</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Cancelled</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if booking.status == 'confirmed' %}
+                                    <form action="{{ url_for('cancel_booking', booking_id=booking.booking_id) }}" method="POST" class="d-inline">
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="confirmCancellation(this.form)">
+                                            <i class="fas fa-times-circle"></i> Cancel
+                                        </button>
+                                    </form>
+                                {% endif %}
+                                <a href="{{ url_for('download_receipt', booking_id=booking.booking_id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-download"></i> Receipt
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8">No bookings found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmCancellationModal" tabindex="-1">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cancel Booking</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to cancel this booking?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep it</button>
+                    <button type="button" class="btn btn-danger" onclick="proceedWithCancellation()">Yes, Cancel it</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .badge {
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            margin: 0 2px;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .modal-confirm {
+            color: #636363;
+        }
+        
+        .modal-confirm .modal-content {
+            padding: 20px;
+            border-radius: 5px;
+            border: none;
+        }
+    </style>
+
+    <script>
+    let formToSubmit = null;
+
+    function confirmCancellation(form) {
+        formToSubmit = form;
+        new bootstrap.Modal(document.getElementById('confirmCancellationModal')).show();
+    }
+
+    function proceedWithCancellation() {
+        if (formToSubmit) {
+            formToSubmit.submit();
+        }
+    }
+    </script>
+</body>
+{% endblock %}

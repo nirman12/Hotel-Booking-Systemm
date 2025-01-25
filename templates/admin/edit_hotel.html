@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Hotel</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="name" class="form-label">Hotel Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ hotel.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" name="city" value="{{ hotel.city }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="capacity" class="form-label">Capacity</label>
+            <input type="number" class="form-control" id="capacity" name="capacity" value="{{ hotel.capacity }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="about_paragraph" class="form-label">Description</label>
+            <textarea class="form-control" id="about_paragraph" name="about_paragraph" rows="3" required>{{ hotel.about_paragraph }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Hotel Image</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+            {% if hotel.image %}
+            <div class="mt-2">
+                <p>Current Image:</p>
+                <img src="{{ url_for('static', filename='hotel_images/' + hotel.image) }}" alt="{{ hotel.name }}" class="img-thumbnail" style="max-width: 200px;">
+            </div>
+            {% endif %}
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Update Hotel</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

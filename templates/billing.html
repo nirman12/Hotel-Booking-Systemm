@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+
+{% block title %}Complete Your Booking{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Inter', system-ui, sans-serif;
+        color: #2d3748;
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+    .topcontent {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  .topcontent img {
+    width: 90%;
+    height: 50vh;
+    object-fit: cover;
+  }
+  .images {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  .topics {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  @media screen and (max-width: 830px) {
+    .images {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .rooms img {
+      width: 50%;
+    }
+  }
+  .rooms {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .rooms h3 {
+    margin-top: 10px;
+  }
+  img {
+    border-radius: 8px;
+  }
+    .container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .booking-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .booking-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .header h1 {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        color: #1a365d;
+        margin-bottom: 0.5rem;
+    }
+
+    .header p {
+        color: #718096;
+        font-size: clamp(1rem, 2vw, 1.1rem);
+    }
+
+    .availability-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .input-group label {
+        font-weight: 500;
+        color: #2d3748;
+    }
+
+    .input-group input,
+    .input-group select {
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        background-color: white;
+        color: #1a365d;
+        transition: all 0.3s ease;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+        border-color: #4c51bf;
+        box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.1);
+        outline: none;
+    }
+
+    .guest-details {
+        margin-top: 2rem;
+    }
+
+    .payment-info {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    .security-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .security-badge img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .pay-hotel-btn {
+        background: linear-gradient(135deg, #4c51bf 0%, #6366f1 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        max-width: 300px;
+        margin: 1rem auto;
+        display: block;
+    }
+
+    .pay-hotel-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 1rem auto;
+        }
+
+        .booking-card {
+            padding: 1.5rem;
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .booking-card {
+        animation: fadeIn 0.5s ease forwards;
+    }
+</style>
+
+<div class="container">
+    <div class="topcontent">
+        <h1 class="details">{{hotel.name}}</h1>
+        <img
+          src="{{url_for('static',filename='/img/backgroundrooms.jpg')}}"
+          alt="background image"
+        />
+      </div>
+      <div class="ourrooms">
+        <div class="topics">
+          <h1 class="hotel_details">
+            <span style="color: purple">Our</span> Rooms
+          </h1>
+        </div>
+        <div class="imagesHotel">
+          <div class="images">
+            <div class="rooms">
+              <img
+                src="{{ url_for('static', filename='/img/room3.jpg') }}"
+                class="img-fluid"
+                alt="..."
+                height="100px"
+                width="80%"
+              />
+              <h3 class="room1"><span style="color: peru">Standard</span> Room</h3>
+              <h5 class="price">
+                <span style="color: gold; font-weight: 100"
+                  >${{ rooms[0].price_per_night }}</span
+                >
+              </h5>
+            </div>
+    
+            <div class="rooms">
+              <img
+                src="{{ url_for('static', filename='/img/room1.jpg') }}"
+                class="img-fluid"
+                alt="..."
+                height="100px"
+                width="80%"
+              />
+              <h3 class="room1">Double <span style="color: peru">Room</span></h3>
+              <h5 class="price">
+                <span style="color: gold; font-weight: 100"
+                  >${{ rooms[1].price_per_night }}</span
+                >
+              </h5>
+            </div>
+    
+            <div class="rooms">
+              <img
+                src="{{ url_for('static', filename='/img/room2.jpg') }}"
+                class="img-fluid"
+                alt="..."
+                height="100px"
+                width="80%"
+              />
+              <h3 class="room1"><span style="color: peru">Family</span> Room</h3>
+              <h5 class="price">
+                <span style="color: gold; font-weight: 100"
+                  >${{ rooms[2].price_per_night }}</span
+                >
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="booking-card">
+        <div class="header">
+            <h1>Complete Your Booking</h1>
+            <p>You're just a few steps away from your perfect stay</p>
+        </div>
+
+        <form action="{{ url_for('billing',hotel_id=hotel.hotel_id) }}" method="post">
+            <div class="availability-section">
+                <div class="input-group">
+                    <label for="checkIn">Check In Date</label>
+                    <input type="date" id="checkIn" name="checkIn" required>
+                </div>
+                <div class="input-group">
+                    <label for="checkOut">Check Out Date</label>
+                    <input type="date" id="checkOut" name="checkOut" required>
+                </div>
+                <div class="input-group">
+                    <label for="roomType">Room Type</label>
+                    <select name="rooms" id="roomType" required>
+                        <option value="StandardRoom">Standard Room</option>
+                        <option value="1Adult">Double Room</option>
+                        <option value="FamilyRoom">Family Room</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="numberofPeople">Number of Guests</label>
+                    <select name="numberofPeople" id="numberofPeople" required>
+                        <option value="1Guest">1</option>
+                        <option value="2Guests">2</option>
+                        <option value="3Guests">3</option>
+                        <option value="4Guests">4</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="nights">Nights</label>
+                    <input type="number" id="nights" name="nights" required min="1" max="30">
+                </div>
+            </div>
+
+            <div class="guest-details">
+                <div class="input-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="phone">Mobile Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Your contact number" required>
+                </div>
+            </div>
+
+            <div class="payment-info">
+                <div class="security-badge">
+                    <img src="{{ url_for('static', filename='/img/shield.png') }}" alt="security">
+                    <span>Secure Booking - No Payment Required Today</span>
+                </div>
+                <p>Complete your booking now and pay directly at the hotel during your stay.</p>
+                <button type="submit" class="pay-hotel-btn">
+                    Complete Booking - Pay at Hotel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    // Function to handle changes in room type selection
+    document.getElementById('roomType').addEventListener('change', function() {
+        const roomType = this.value;
+        const numberOfGuests = document.getElementById('numberofPeople');
+        
+        // Reset guest options
+        numberOfGuests.innerHTML = '';
+
+        // Set max guests based on room type
+        let maxGuests;
+        if (roomType === 'StandardRoom') {
+            maxGuests = 2;
+        } else if (roomType === '1Adult') {
+            maxGuests = 4;
+        } else if (roomType === 'FamilyRoom') {
+            maxGuests = 6;
+        }
+
+        // Populate the guest options based on maxGuests
+        for (let i = 1; i <= maxGuests; i++) {
+            let option = document.createElement('option');
+            option.value = `${i}`;
+            option.textContent = `${i}`;
+            numberOfGuests.appendChild(option);
+        }
+    });
+
+    // Function to handle date restrictions
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkInDate = document.getElementById('checkIn');
+        const checkOutDate = document.getElementById('checkOut');
+        
+        // Get today's date in the correct format
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        const todayDate = yyyy + '-' + mm + '-' + dd;
+
+        // Set the minimum check-in date as today
+        checkInDate.min = todayDate;
+
+        // Set the maximum booking date as 90 days from today
+        const maxBookingDate = new Date(today);
+        maxBookingDate.setDate(today.getDate() + 90);
+        const maxDate = maxBookingDate.toISOString().split('T')[0];
+        checkInDate.max = maxDate;
+
+        // Ensure the check-out date is never before check-in date
+        checkInDate.addEventListener('change', function() {
+            checkOutDate.min = checkInDate.value;
+        });
+
+        // Ensure the check-out date is never after 90 days from check-in date
+        checkOutDate.addEventListener('change', function() {
+            const checkInValue = new Date(checkInDate.value);
+            const maxCheckOutDate = new Date(checkInValue);
+            maxCheckOutDate.setDate(checkInValue.getDate() + 90);
+            checkOutDate.max = maxCheckOutDate.toISOString().split('T')[0];
+        });
+    });
+</script>
+
+{% endblock %}

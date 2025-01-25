@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Hotels{% endblock %}
+
+{% block content %}
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7xNuOa1rt7CqTxN9nXKsKqKbxCAy+30oWxU"
+  crossorigin="anonymous"
+/>
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header {
+    text-align: center;
+    padding: 30px 0;
+    color: black;
+    border-radius: 0 0 30px 30px;
+  }
+
+  .header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+  }
+
+  .hotel-container {
+    margin: 40px auto;
+    padding: 20px;
+    max-width: 1200px;
+  }
+
+  .hotel-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .hotel-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .hotel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .hotel-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .hotel-card .card-body {
+    padding: 20px;
+  }
+
+  .hotel-card h3 {
+    color: #6c63ff;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+  }
+
+  .hotel-card p {
+    margin: 0 0 10px;
+  }
+
+  .btn-primary {
+    background-color: #6c63ff;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary:hover {
+    background-color: #574cc8;
+    text-decoration: none;
+  }
+
+  .no-hotels {
+    text-align: center;
+    margin: 40px 0;
+    font-size: 1.2rem;
+    color: #666;
+  }
+
+  .other-hotels-title {
+    text-align: center;
+    margin-top: 60px;
+    font-size: 2rem;
+    color: #6c63ff;
+  }
+</style>
+
+<div class="header">
+  <h1>Hotels in <span style="color:#6c63ff;">{{ city }}</span></h1>
+</div>
+
+<div class="hotel-container">
+  {% if our_hotels %}
+  <div class="hotel-list">
+    {% for hotel in our_hotels %}
+    <div class="hotel-card">
+      <div class="hotel-image">
+        {% if hotel.image_url %}
+          <img src="{{ url_for('static', filename=hotel.image_url) }}" alt="{{ hotel.name }}" class="img-fluid">
+        {% else %}
+          <img src="{{ url_for('static', filename='img/default_hotel.jpeg') }}" alt="{{ hotel.name }}" class="img-fluid">
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <h3>{{ hotel.name }}</h3>
+        <p><strong>City:</strong> {{ hotel.city }}</p>
+        <p><strong>Capacity:</strong> {{ hotel.capacity }}</p>
+        <p>{{ hotel.about_paragraph }}</p>
+        <a href="{{ url_for('hotel_details', hotel_id=hotel.hotel_id) }}" class="btn-primary">See Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No hotels available in {{ city }}.</p>
+  {% endif %}
+
+  <h2 style="margin: 50px;text-align: center;">Our Other <span style="color: #6c63ff;">Hotels</span></h2>
+  <div class="hotel-list">
+    {% for hotel in other_hotels %}
+    <div class="hotel-card" style="margin: 20px;">
+      <div class="hotel-image">
+        {% if hotel.image_url %}
+          <img src="{{ url_for('static', filename=hotel.image_url) }}" alt="{{ hotel.name }}" class="img-fluid">
+        {% else %}
+          <img src="{{ url_for('static', filename='img/default_hotel.jpeg') }}" alt="{{ hotel.name }}" class="img-fluid">
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <h3>{{ hotel.name }}</h3>
+        <p><strong>City:</strong> {{ hotel.city }}</p>
+        <p><strong>Capacity:</strong> {{ hotel.capacity }}</p>
+        <p>{{ hotel.about_paragraph }}</p>
+        <a href="{{ url_for('hotel_details', hotel_id=hotel.hotel_id) }}" class="btn-primary">See Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+3iom7EENw1DhZ4+VV9KtP4y+fnSI"
+  crossorigin="anonymous"
+></script>
+{% endblock %}
