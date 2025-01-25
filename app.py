@@ -14,7 +14,7 @@ from decimal import Decimal
 
 app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/')
 app.secret_key = 'pbkdf2:sha256:600000$dBRwMJV8DnKsSXQP$c6c5c0532d2b8534c26b5acf66a7424772c6f0483772b6c98f2ade0188f9dfc9'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:etusaa@localhost/simple_world_hotels'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost/simple_world_hotels'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 secret_key = secrets.token_hex(32)
 
